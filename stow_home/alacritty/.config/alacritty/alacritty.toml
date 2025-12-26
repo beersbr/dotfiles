@@ -1,0 +1,20 @@
+[general]
+live_config_reload = true
+ipc_socket = true
+working_directory = "$HOME/"
+
+[scrolling]
+history = 5000
+
+[font]
+normal = { family = "Fira Code" }
+
+
+[bell]
+duration = 0
+
+
+[cursor]
+style = { "shape" = "Block", blinking = "Always" }
+thickness = 0.15
+
