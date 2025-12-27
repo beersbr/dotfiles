@@ -1,4 +1,6 @@
+
 [general]
+import = ["rose-pine-moon.toml"]
 live_config_reload = true
 ipc_socket = true
 working_directory = "$HOME/"
