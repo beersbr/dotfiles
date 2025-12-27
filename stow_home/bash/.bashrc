@@ -2,7 +2,7 @@
 
 # if not running in interactive mode then stop. Source github:bahamas10
 [[ -n $PS1 ]] || return
-
+stty sane
 
 # *******************************************************************
 # COLOR CONSTANTS
