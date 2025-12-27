@@ -1,6 +1,6 @@
 # .bashrc
 
-# if not running in interactive mode then stop github:bahamas10
+# if not running in interactive mode then stop. Source github:bahamas10
 [[ -n $PS1 ]] || return
 
 
@@ -172,6 +172,32 @@ function git_squash() {
     git reset $(git merge-base $1 $(git branch --show-current))
 }
 
+
+function whats_big() {
+    # Better version of the big file finder from github:nnewsom
+    local HEADER_LINES=2
+    local DEFAULT_LINES=7
+    local COUNT=$(($DEFAULT_LINES+$HEADER_LINES))
+
+    if [ $# -ne 0 ]; then
+        COUNT=$(($1+$HEADER_LINES))
+    fi
+    du -ca --max-depth=4 | sort -nr | head -n "$COUNT" | tail -n+2 | awk -F' ' '{ printf ("%12d %s\n",$1,$2) }'
+}
+
+
+function encrypt_file() {
+    # Encrypt file using openssl. source github:nnewsom
+    openssl aes-256-cbc -a -pbkdf2 -salt -in "$1" -out "$1".enc
+}
+
+
+function decrypt_file() {
+    # Decrypt previousy encrypted file using openssl. Source github:nnewsom
+    openssl aes-256-cbc -d -a -pbkdf2 -salt -in "$1" -out "$1".plaintext
+}
+
+
 # *******************************************************************
 # COMMON TOOL SETUP
 # *******************************************************************
@@ -182,4 +208,5 @@ if [ -e "$HOME/.pyenv/bin/pyenv" ]; then
     eval "$(pyenv init - bash)"
 else
     echo -e "${red}OOPS: pyenv not found; shell setup being ignored.${nocolor}"
+    echo "Try: \"curl -fsSL https://pyenv.run | bash\" from https://github.com/pyenv/pyenv?tab=readme-ov-file#a-getting-pyenv"
 fi
