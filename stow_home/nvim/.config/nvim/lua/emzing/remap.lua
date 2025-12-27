@@ -27,3 +27,6 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>rld", ":update<CR> :source<CR>")
 
+-- clear search hightlight
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+

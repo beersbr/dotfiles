@@ -21,7 +21,7 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
-vim.opt.hlsearch = false
+vim.opt.hlsearch = true
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
@@ -33,38 +33,35 @@ vim.opt.termguicolors = true
 
 vim.opt.list = true
 
-vim.opt.listchars = { tab = "> ", trail = ".", nbsp = "_" }
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 vim.opt.scrolloff = 8
 
 vim.opt.signcolumn = "yes"
 
 vim.opt.isfname:append("@-@")
-
 vim.opt.inccommand = "split"
 
 vim.opt.cursorline = true
 
-vim.fileformat = unix
+vim.fileformat = "unix"
 vim.opt.updatetime = 50
-
-vim.opt.colorcolumn = "120"
-
+vim.opt.colorcolumn = "110"
 
 local colors = {
-    fg = "#c0c0c0",
-    bg = "#4a4a4a",
-    fg_inactive = "#909090",
-    bg_inactive = "#343434"
+	fg = "#c0c0c0",
+	bg = "#4a4a4a",
+	fg_inactive = "#909090",
+	bg_inactive = "#343434",
 }
 
 vim.api.nvim_set_hl(0, "StatusLine", {
-    fg = colors.fg,
-    bg = colors.bg,
-    bold=true
+	fg = colors.fg,
+	bg = colors.bg,
+	bold = true,
 })
 
 vim.api.nvim_set_hl(0, "StatusLineNC", {
-    fg = colors.fg_inactive,
-    bg = colors.bg_inactive
+	fg = colors.fg_inactive,
+	bg = colors.bg_inactive,
 })
