@@ -84,7 +84,7 @@ export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUPSTREAM="auto"
 
-PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")'; PS1='${cl_grey}\t${cl_clear} \u${cl_blue}@${cl_clear}\h${cl_grey}[${cl_clear}\w${cl_grey}]${cl_clear}${PS1_CMD1}\[\e[0m\]\$ '
+PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")'; PS1='${cl_grey}\]\t${cl_clear}\] \u${cl_blue}\]@${cl_clear}\]\h${cl_grey}\][${cl_clear}\]\w${cl_grey}\]]${cl_clear}\]${PS1_CMD1}${cl_clear}\]\$ '
 
 
 # *******************************************************************
