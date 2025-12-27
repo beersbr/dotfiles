@@ -3,6 +3,11 @@
 # if not running in interactive mode then stop github:bahamas10
 [[ -n $PS1 ]] || return
 
+
+red=$'\\e[1;31m'
+nocolor=$'\\e[0m'
+
+
 # Source global definitions -- this is from Fedora installs
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
@@ -52,7 +57,7 @@ if [ ! "$(type -t __git_ps1)" = "function" ]; then
     case $(awk -F= '$1=="ID" {print $2}' /etc/os-release) in
         fedora) source /usr/share/git-core/contrib/completion/git-prompt.sh;;
         ubuntu) source /usr/lib/git-core/git-sh-prompt;;
-        *) echo "\033[0;31mOOPS: No git-prompt found\033[0m"
+        *) echo -e "${red}OOPS: No git-prompt found${nocolor}"
         # arch) source /usr/share/git/completion/git-prompt.sh
     esac
 
@@ -170,10 +175,11 @@ function git_squash() {
 # *******************************************************************
 # COMMON TOOL SETUP
 # *******************************************************************
-
-
-#### PYENV $ curl -fsSL https://pyenv.run | bash
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - bash)"
-
+if [ -e "$HOME/.pyenv/bin/pyenv" ]; then
+    #### PYENV $ curl -fsSL https://pyenv.run | bash
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - bash)"
+else
+    echo -e "${red}OOPS: pyenv not found; shell setup being ignored.${nocolor}"
+fi
