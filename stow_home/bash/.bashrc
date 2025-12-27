@@ -4,9 +4,19 @@
 [[ -n $PS1 ]] || return
 
 
-red=$'\\e[1;31m'
-nocolor=$'\\e[0m'
+# *******************************************************************
+# COLOR CONSTANTS
+# *******************************************************************
 
+cl_grey=$'\e[38;5;242m'
+cl_blue=$'\e[38;5;32m'
+cl_red=$'\e[1;31m'
+cl_clear=$'\e[0m'
+
+
+# *******************************************************************
+# DEFAULTS SETUP
+# *******************************************************************
 
 # Source global definitions -- this is from Fedora installs
 if [ -f /etc/bashrc ]; then
@@ -19,12 +29,6 @@ if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 fi
 export PATH
 
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-export SYSTEMD_PAGER='less'
-export PAGER='less'
-export EDITOR='nvim'
-export VISUAL='nvim'
-
 
 # User specific aliases and functions
 if [ -d ~/.bashrc.d ]; then
@@ -36,8 +40,16 @@ if [ -d ~/.bashrc.d ]; then
 fi
 unset rc
 
+export SYSTEMD_PAGER='less'
+export PAGER='less'
+export EDITOR='nvim'
+export VISUAL='nvim'
 
-# User specific environment and startup programs
+
+# *******************************************************************
+# ALIAS
+# *******************************************************************
+
 alias gs="git status -uno"
 alias gss="git status --ignored=traditional"
 alias gc="git commit -m"
@@ -51,13 +63,18 @@ alias git_current_branch="git rev-parse --abbrev-ref HEAD"
 alias ll="ls -al --color=auto"
 alias ls="ls --color=auto"
 
+
+# *******************************************************************
+# PROMPT SETUP
+# *******************************************************************
+
 force_color_prompt=yes
 
 if [ ! "$(type -t __git_ps1)" = "function" ]; then
     case $(awk -F= '$1=="ID" {print $2}' /etc/os-release) in
         fedora) source /usr/share/git-core/contrib/completion/git-prompt.sh;;
         ubuntu) source /usr/lib/git-core/git-sh-prompt;;
-        *) echo -e "${red}OOPS: No git-prompt found${nocolor}"
+        *) echo -e "${cl_red}OOPS: No git-prompt found${cl_clear}"
         # arch) source /usr/share/git/completion/git-prompt.sh
     esac
 
@@ -67,7 +84,8 @@ export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUPSTREAM="auto"
 
-PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")'; PS1='\t \u\[\e[38;5;32m\]@\[\e[0m\]\h\[\e[38;5;242m\][\[\e[0m\]\w \[\e[38;5;242m\]]\[\e[38;5;247m\]${PS1_CMD1}\[\e[0m\]\$ '
+PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")'; PS1='${cl_grey}\t${cl_clear} \u${cl_blue}@${cl_clear}\h${cl_grey}[${cl_clear}\w${cl_grey}]${cl_clear}${PS1_CMD1}\[\e[0m\]\$ '
+
 
 # *******************************************************************
 # UTIL FUNCTIONS
@@ -145,7 +163,6 @@ function gc {
 }
 
 
-
 function gitparent {
     # try get the parent branch that the current branch came from
     git show-branch -a \
@@ -207,6 +224,6 @@ if [ -e "$HOME/.pyenv/bin/pyenv" ]; then
     [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init - bash)"
 else
-    echo -e "${red}OOPS: pyenv not found; shell setup being ignored.${nocolor}"
+    echo -e "${cl_red}OOPS: pyenv not found; shell setup being ignored.${cl_clear}"
     echo "Try: \"curl -fsSL https://pyenv.run | bash\" from https://github.com/pyenv/pyenv?tab=readme-ov-file#a-getting-pyenv"
 fi
