@@ -67,6 +67,13 @@ require("lazy").setup({
 				end,
 				desc = "Marks",
 			},
+			{
+				"<leader>sl",
+				function()
+					Snacks.picker.loclist()
+				end,
+				desc = "Marks",
+			},
 		},
 	},
 	{
@@ -96,15 +103,19 @@ require("lazy").setup({
 					map("gra", vim.lsp.buf.code_action, "goto code action")
 					map("grr", vim.lsp.buf.code_action, "goto references")
 					map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+
 					map("gi", function()
 						Snacks.picker.lsp_implementations()
 					end, "goto implementation")
+
 					map("gd", function()
 						Snacks.picker.lsp_definitions()
 					end, "goto definition")
+
 					map("gD", function()
 						Snacks.picker.lsp_declarations()
 					end, "goto declarations")
+
 					map("gr", function()
 						Snacks.picker.lsp_references()
 					end, "goto declarations")
@@ -112,6 +123,7 @@ require("lazy").setup({
 					map("<leader>sS", function()
 						Snacks.picker.lsp_workspace_symbols()
 					end, "LSP Workspace Symbols")
+
 					map("<leader>ss", function()
 						Snacks.picker.lsp_symbols()
 					end, "LSP Symbols")
@@ -149,6 +161,7 @@ require("lazy").setup({
 			})
 
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
+
 			local servers = {
 				ty = {
 					capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
@@ -213,19 +226,19 @@ require("lazy").setup({
 	},
 	{ -- Autoformat
 		"stevearc/conform.nvim",
-		lazy = false,
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
 		keys = {
 			{
 				"<leader>f",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ async = true, lsp_format = "fallback" })
 				end,
 				mode = "",
 				desc = "Format buffer",
 			},
 		},
 		opts = {
-			formatters = {},
 			notify_on_error = false,
 			format_on_save = function(bufnr)
 				-- Disable "format_on_save lsp_fallback" for languages that don't
@@ -239,7 +252,7 @@ require("lazy").setup({
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "ruff" },
+				python = { "ruff", "ty" },
 				javascript = { "prettierd", "prettier", stop_after_first = true },
 				html = { "prettier" },
 				markdown = { "prettier" },
