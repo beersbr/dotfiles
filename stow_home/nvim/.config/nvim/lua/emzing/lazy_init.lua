@@ -273,7 +273,7 @@ require("lazy").setup({
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "ruff", "ruff_format" },
+				python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
 				javascript = { "prettierd", "prettier", stop_after_first = true },
 				html = { "prettierd", "prettier" },
 				markdown = { "prettierd", "prettier" },
