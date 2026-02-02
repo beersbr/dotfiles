@@ -16,13 +16,14 @@ require("lazy").setup({
 	{ "nvim-lua/plenary.nvim" },
 	{
 		-- "sainnhe/gruvbox-material",
-		"zenbones-theme/zenbones.nvim",
+		-- "zenbones-theme/zenbones.nvim",
+		"dybdeskarphet/gruvbox-minimal.nvim",
 		dependencies = "rktjmp/lush.nvim",
 		lazy = false,
 		priority = 10000,
 		init = function()
 			vim.opt.background = "dark"
-			vim.cmd.colorscheme("zenbones")
+			vim.cmd.colorscheme("gruvbox-minimal")
 			vim.cmd.hi("Comment gui=none")
 		end,
 	},
@@ -67,6 +68,13 @@ require("lazy").setup({
 				end,
 				desc = "Marks",
 			},
+			{
+				"<leader>sl",
+				function()
+					Snacks.picker.loclist()
+				end,
+				desc = "Marks",
+			},
 		},
 	},
 	{
@@ -74,15 +82,14 @@ require("lazy").setup({
 		dependencies = {
 			{ "mason-org/mason.nvim", opts = {} },
 			"mason-org/mason-lspconfig.nvim",
-			"neovim/nvim-lspconfig",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
 			{ "j-hui/fidget.nvim", opts = {} },
 			"saghen/blink.cmp",
 		},
-		opts = {
-			automatic_enable = false,
-		},
+		-- opts = {
+		-- 	automatic_enable = false,
+		-- },
 		config = function()
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("mason-lsp-attach", { clear = true }),
@@ -96,15 +103,19 @@ require("lazy").setup({
 					map("gra", vim.lsp.buf.code_action, "goto code action")
 					map("grr", vim.lsp.buf.code_action, "goto references")
 					map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+
 					map("gi", function()
 						Snacks.picker.lsp_implementations()
 					end, "goto implementation")
+
 					map("gd", function()
 						Snacks.picker.lsp_definitions()
 					end, "goto definition")
+
 					map("gD", function()
 						Snacks.picker.lsp_declarations()
 					end, "goto declarations")
+
 					map("gr", function()
 						Snacks.picker.lsp_references()
 					end, "goto declarations")
@@ -112,6 +123,7 @@ require("lazy").setup({
 					map("<leader>sS", function()
 						Snacks.picker.lsp_workspace_symbols()
 					end, "LSP Workspace Symbols")
+
 					map("<leader>ss", function()
 						Snacks.picker.lsp_symbols()
 					end, "LSP Symbols")
@@ -121,6 +133,7 @@ require("lazy").setup({
 					-- { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
 				end,
 			})
+
 			vim.diagnostic.config({
 				severity_sort = true,
 				float = { border = "rounded", source = "if_many" },
@@ -149,17 +162,23 @@ require("lazy").setup({
 			})
 
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
+
 			local servers = {
 				ty = {
-					capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
 					settings = {
-						logLevel = "debug",
+						capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
+						ty = {
+							logLevel = "debug",
+							diagnosticMode = "workspace",
+						},
 					},
 				},
 				ruff = {
-					capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
 					settings = {
-						logLevel = "debug",
+						capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
+						ruff = {
+							logLevel = "debug",
+						},
 					},
 				},
 				lua_ls = {
@@ -188,8 +207,9 @@ require("lazy").setup({
 					function(server_name)
 						local server = servers[server_name] or {}
 						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						vim.lsp.config(server_name, server)
-						vim.lsp.enable(server_name)
+						-- vim.lsp.enable(server_name)
+						-- vim.lsp.config(server_name, server)
+						require("lspconfig")[server_name].setup(server)
 					end,
 				},
 			})
@@ -213,39 +233,50 @@ require("lazy").setup({
 	},
 	{ -- Autoformat
 		"stevearc/conform.nvim",
-		lazy = false,
+		dependencies = {
+			{ "neovim/nvim-lspconfig" },
+			{ "nvim-lua/plenary.nvim" },
+			{ "williamboman/mason.nvim" },
+		},
+		log_level = "DEBUG",
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
 		keys = {
 			{
 				"<leader>f",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ async = true })
 				end,
 				mode = "",
 				desc = "Format buffer",
 			},
 		},
 		opts = {
-			formatters = {},
-			notify_on_error = false,
+			log_level = vim.log.levels.DEBUG,
+			notify_on_error = true,
 			format_on_save = function(bufnr)
 				-- Disable "format_on_save lsp_fallback" for languages that don't
 				-- have a well standardized coding style. You can add additional
 				-- languages here or re-enable it for the disabled ones.
 				local disable_filetypes = { c = true, cpp = true }
-				return {
-					timeout_ms = 600,
-					lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-				}
+				if disable_filetypes[vim.bo[bufnr].filetype] then
+					return nil
+				else
+					return {
+						timeout_ms = 300,
+						lsp_fallback = "fallback",
+					}
+				end
 			end,
+			default_format_opts = {
+				lsp_format = "fallback",
+			},
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "ruff" },
+				python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
 				javascript = { "prettierd", "prettier", stop_after_first = true },
-				html = { "prettier" },
-				markdown = { "prettier" },
-				-- Conform can also run multiple formatters sequentially
-				-- You can use a sub-list to tell conform to run *until* a formatter
-				-- is found.
+				html = { "prettierd", "prettier" },
+				markdown = { "prettierd", "prettier" },
 			},
 		},
 	},

@@ -36,6 +36,7 @@ vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 vim.opt.scrolloff = 8
+vim.opt.ff = "unix"
 
 vim.opt.signcolumn = "yes"
 
