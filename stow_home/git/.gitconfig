@@ -1,5 +1,8 @@
 [user]
 	email = beersbr@gmail.com
-	name = brett
+	name = B
 [core]
 	autocrlf = input
+[alias]
+	ll = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset'
+	unadd = reset HEAD --

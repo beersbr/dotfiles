@@ -45,6 +45,8 @@ export PAGER='less'
 export EDITOR='nvim'
 export VISUAL='nvim'
 
+export CLICOLOR=1
+export LSCOLORS=gxfxcxdxbxegedabaeaced
 
 # *******************************************************************
 # ALIAS
