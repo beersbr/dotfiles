@@ -76,6 +76,7 @@ if [ ! "$(type -t __git_ps1)" = "function" ]; then
     case $(awk -F= '$1=="ID" {print $2}' /etc/os-release) in
         fedora) source /usr/share/git-core/contrib/completion/git-prompt.sh;;
         ubuntu) source /usr/lib/git-core/git-sh-prompt;;
+        arch) source /usr/share/git/git-prompt.sh;;
         *) echo -e "${cl_red}OOPS: No git-prompt found${cl_clear}"
         # arch) source /usr/share/git/completion/git-prompt.sh
     esac
