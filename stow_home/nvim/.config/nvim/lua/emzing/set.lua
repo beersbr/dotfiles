@@ -12,6 +12,25 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 vim.opt.mouse = "a"
 vim.opt.breakindent = true
+local is_wsl2 = vim.uv.os_uname().release:lower():find("microsoft-standard", 1, true) ~= nil
+
+if is_wsl2 then
+	local win32yank = vim.fn.expand("~/.local/bin/win32yank.exe")
+
+	vim.g.clipboard = {
+		name = "win32yank",
+		copy = {
+			["+"] = { win32yank, "-i", "--crlf" },
+			["*"] = { win32yank, "-i", "--crlf" },
+		},
+		paste = {
+			["+"] = { win32yank, "-o", "--lf" },
+			["*"] = { win32yank, "-o", "--lf" },
+		},
+		cache_enabled = 0,
+	}
+end
+
 vim.opt.clipboard = "unnamedplus"
 vim.opt.showmode = false
 vim.opt.wrap = false
@@ -51,7 +70,7 @@ vim.opt.colorcolumn = "110"
 
 local colors = {
 	fg = "#c0c0c0",
-	bg = "#4a4a4a",
+	bg = "#6a4a6a",
 	fg_inactive = "#909090",
 	bg_inactive = "#343434",
 }

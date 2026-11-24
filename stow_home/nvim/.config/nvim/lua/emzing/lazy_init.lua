@@ -14,17 +14,33 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ "NMAC427/guess-indent.nvim" },
 	{ "nvim-lua/plenary.nvim" },
+	-- {
+	-- "sainnhe/gruvbox-material",
+	-- "zenbones-theme/zenbones.nvim",
+	-- "dybdeskarphet/gruvbox-minimal.nvim",
+	-- dependencies = "rktjmp/lush.nvim",
+	-- lazy = false,
+	-- priority = 10000,
+	-- init = function()
+	-- 	vim.opt.background = "dark"
+	-- 	vim.cmd.colorscheme("gruvbox-minimal")
+	-- 	vim.cmd.hi("Comment gui=none")
+	-- end,
+	-- },
 	{
-		-- "sainnhe/gruvbox-material",
-		-- "zenbones-theme/zenbones.nvim",
-		"dybdeskarphet/gruvbox-minimal.nvim",
+		"neanias/everforest-nvim",
 		dependencies = "rktjmp/lush.nvim",
+		version = false,
 		lazy = false,
-		priority = 10000,
-		init = function()
-			vim.opt.background = "dark"
-			vim.cmd.colorscheme("gruvbox-minimal")
-			vim.cmd.hi("Comment gui=none")
+		priority = 1000,
+		config = function()
+			require("everforest").setup({
+				background = "hard",
+				transparent_background_level = 0,
+				italics = false,
+				ui_contrast = "low",
+			})
+			vim.cmd.colorscheme("everforest")
 		end,
 	},
 	{
@@ -75,8 +91,30 @@ require("lazy").setup({
 				end,
 				desc = "Marks",
 			},
+			{
+				"<leader>sb",
+				function()
+					Snacks.picker.buffers()
+				end,
+				desc = "Buffers",
+			},
+			{
+				"<leader>st",
+				function()
+					Snacks.terminal()
+				end,
+				desc = "terminal",
+			},
+			{
+				"<leader>pf",
+				function()
+					Snacks.picker.explorer()
+				end,
+				desc = "terminal",
+			},
 		},
 	},
+
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
@@ -191,6 +229,9 @@ require("lazy").setup({
 						},
 					},
 				},
+				ols = {
+					capabilities = require("blink.cmp").get_lsp_capabilities(),
+				},
 			}
 
 			local ensure_installed = vim.tbl_keys(servers or {})
@@ -277,6 +318,7 @@ require("lazy").setup({
 				javascript = { "prettierd", "prettier", stop_after_first = true },
 				html = { "prettierd", "prettier" },
 				markdown = { "prettierd", "prettier" },
+				odin = { "ols" },
 			},
 		},
 	},
@@ -382,16 +424,55 @@ require("lazy").setup({
 		"nvim-mini/mini.nvim",
 		version = "*",
 		config = function(_, opts)
-			require("mini.statusline").setup()
-			require("mini.snippets").setup()
+			local snippets = require("mini.snippets")
+			local gen_loader = snippets.gen_loader
+			snippets.setup({
+				snippets = {
+					gen_loader.from_file("~/.config/nvim/lua/emzing/snippets/global.json"),
+				},
+				mappings = {
+					expand = "",
+				},
+			})
+
+			local function tab_or_expand()
+				if #MiniSnippets.expand({ insert = false }) > 0 then
+					vim.schedule(function()
+						MiniSnippets.expand()
+					end)
+				else
+					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
+				end
+			end
+			-- vim.keymap.set("i", "<Tab>", tab_or_expand, { silent = true })
+
 			require("mini.align").setup()
+
+			require("mini.statusline").setup()
+			vim.api.nvim_set_hl(0, "MiniStatuslineModeNormal", { fg = "#1e1e2e", bg = "#89b4fa", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineModeInsert", { fg = "#bebebe", bg = "#90345a", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineInactive", { fg = "#bebebe", bg = "#09347a", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", { fg = "#1e1e2e", bg = "#89b4fa", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineFileinfo", { fg = "#1e1e2e", bg = "#89b4fa", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineFilename", { fg = "#1e1e2e", bg = "#89b4fa", bold = true })
+			vim.api.nvim_set_hl(0, "MiniStatuslineOther", { fg = "#1e1e2e", bg = "#89b4fa", bold = true })
+			vim.api.nvim_set_hl(0, "StatusLine", { fg = "#898989", bg = "#3e338e" })
+			vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#898989", bg = "#3e338e" })
+
+			-- require("mini.animate").setup({
+			-- cursor = { enable = true },
+			-- scroll = { enable = true },
+			-- resize = { enable = true },
+			-- open = { enable = true },
+			-- close = { enable = true },
+			-- })
 		end,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		opts = {
-			ensure_installed = { "bash", "python", "c", "cpp", "lua", "luadoc", "markdown", "vim", "vimdoc" },
+			ensure_installed = { "bash", "python", "c", "cpp", "lua", "luadoc", "markdown", "vim", "vimdoc", "ols" },
 			auto_install = true,
 			highlight = { enable = true },
 			indent = { enable = true },

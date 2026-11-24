@@ -1,0 +1,14 @@
+{
+    "todo_brett": {
+        "prefix": "todo",
+        "body": "TODO(Brett): "
+    },
+    "note_brett": {
+        "prefix": "note",
+        "body": "NOTE(Brett): "
+    },
+    "fixme_brett": {
+        "prefix": "note",
+        "body": "FIXME(Brett): "
+    }
+}
